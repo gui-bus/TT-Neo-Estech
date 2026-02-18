@@ -4,6 +4,7 @@ import { Manrope, Montserrat } from "next/font/google";
 import "./globals.css";
 import Providers from "@/src/lib/providers/providers";
 import { ThemeProvider } from "next-themes";
+import { Header } from "@/src/components/nav/header";
 //#endregion
 
 //#region Fonts
@@ -43,7 +44,10 @@ export default function RootLayout({
           defaultTheme="light"
           disableTransitionOnChange
         >
-          <Providers>{children}</Providers>
+          <Providers>
+            <Header />
+            {children}
+          </Providers>
         </ThemeProvider>
       </body>
     </html>
