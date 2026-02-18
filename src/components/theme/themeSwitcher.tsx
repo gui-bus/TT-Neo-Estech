@@ -4,9 +4,16 @@ import { MoonIcon, SunIcon } from "@phosphor-icons/react";
 import useIsLoaded from "@/src/lib/hooks/common/useIsLoaded";
 import { useCallback } from "react";
 import { useTheme } from "next-themes";
+import { cn } from "@/src/lib/utils/utils";
 //#endregion
 
-const ThemeSwitcher = () => {
+//#region Interfaces
+interface ThemeSwitcherProps {
+  iconClassName?: string;
+}
+//#endregion
+
+const ThemeSwitcher = ({ iconClassName }: ThemeSwitcherProps) => {
   //#region Hooks
   const { theme, setTheme } = useTheme();
   const { isLoaded } = useIsLoaded();
@@ -27,11 +34,15 @@ const ThemeSwitcher = () => {
         (theme === "dark" ? (
           <SunIcon
             size={16}
-            className="transition-colors text-white"
+            className={cn("transition-colors", iconClassName)}
             weight="duotone"
           />
         ) : (
-          <MoonIcon size={16} className="transition-colors" weight="duotone" />
+          <MoonIcon
+            size={16}
+            className={cn("transition-colors", iconClassName)}
+            weight="duotone"
+          />
         ))}
     </button>
   );
