@@ -110,9 +110,23 @@ Para facilitar a validação técnica dos estados de interface, incluí **botõe
 
 ---
 
-# Testes Unitários
+# Testes e Qualidade
 
-Foi implementado um teste unitário utilizando `Vitest` para garantir o funcionamento do hook principal `useTicketsList`, responsável por filtrar, ordenar e manipular os dados da "API mockada".
+### 1. Teste E2E com Cypress
+Valida os fluxos reais de uso: filtros (texto, status, prioridade, área), paginação, alternância de visões (Técnico/Gestor), estados de erro/vazio e o processo completo de abertura de novo chamado.
+
+Modo Terminal (Headless)
+```bash
+pnpm test:e2e
+```
+
+Modo Interativo (Interface Gŕafica):
+```bash
+pnpm cypress:open
+```
+
+### 2. Teste Unitário com Vitest
+Focado na validação do hook customizado useTicketsList, garantindo que a lógica de manipulação de dados (API mockada) esteja funcional.
 
 Comando para rodar os testes:
 ```bash
@@ -120,3 +134,5 @@ pnpm test
 ```
 
 ---
+
+> **Aviso (Windows)**: Ao rodar o test:e2e no Windows, o utilitário de encerramento pode exibir um erro de spawn wmic.exe que não interfere no resultado dos testes.
