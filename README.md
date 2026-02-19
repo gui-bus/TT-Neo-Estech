@@ -2,7 +2,7 @@
 
 Sistema de gerenciamento de chamados técnicos e gestão de indicadores operacionais, desenvolvido como parte do processo seletivo para a Estech. O projeto simula o monitoramento de ativos e abertura de chamados da plataforma NEO.
 
-## Tecnologias e Stack
+# Tecnologias e Stack
 - **Framework:** Next.js 16 (App Router)
 - **Linguagem:** TypeScript
 - **UI Library:** Ant Design
@@ -13,7 +13,7 @@ Sistema de gerenciamento de chamados técnicos e gestão de indicadores operacio
 
 ---
 
-## Como rodar o projeto
+# Como rodar o projeto
 
 Este projeto utiliza o **pnpm** como gerenciador de pacotes para maior performance e eficiência.
 
@@ -41,7 +41,7 @@ Este projeto utiliza o **pnpm** como gerenciador de pacotes para maior performan
 
 ---
 
-## Estratégia para grandes volumes (1.000+ itens)
+# Estratégia para grandes volumes (1.000+ itens)
 
 Para cumprir o requisito de performance com mais de 1.000 registros sem travar a interface, foram adotadas as seguintes estratégias:
 
@@ -50,7 +50,7 @@ Para cumprir o requisito de performance com mais de 1.000 registros sem travar a
 
 ---
 
-## Decisões de Arquitetura e UX
+# Decisões de Arquitetura e UX
 
 ### 1. Sincronização de estado via URL
 
@@ -72,7 +72,7 @@ Foi implementado a persistência de dados durante o fetch de novas páginas, man
 
 ---
 
-## O que eu faria diferente com mais tempo
+# O que eu faria diferente com mais tempo
 
 1. **Refatoração do código:**
    * **Desacoplamento de Componentes:** Grande parte da lógica atual reside na `TicketsTable`. Eu buscaria extrair subcomponentes menores (filtros, cabeçalho de ações, debug bar) para arquivos isolados, facilitando a legibilidade e testes.
@@ -81,18 +81,10 @@ Foi implementado a persistência de dados durante o fetch de novas páginas, man
 2. **Aprofundamento e Estilização do Ant Design:**
    * **Customização de Tema:** Exploraria mais a fundo as customizações do Ant Design para criar uma identidade visual única.
    * **Exploração de Componentes Avançados:** Com mais tempo de estudo da documentação, integraria componentes mais complexos para enriquecer a experiência de uso e a robustez do sistema.
----
-
-### Verificação de estados
-
-Para facilitar a validação técnica dos estados de interface, incluí uma **Barra de verificação de estados** no rodapé da tabela (ao lado da paginação). Com ela, é possível alternar instantaneamente:
-
-- **Forçar Erro:** Valida a tela de falha e o comportamento do botão "Tentar Novamente".
-- **Forçar Vazio:** Valida o feedback visual de "Nenhum chamado encontrado".
 
 ---
 
-## Respostas conceituais
+# Respostas conceituais
 
 1. **Cache e mutação**: Você tem a lista de chamados carregada via React Query com filtros ativos (status = "Aberto", área = "Refrigeração"). O usuário cria um novo chamado pelo formulário. Como você garante que a lista reflita o novo item imediatamente, sem refetch completo de todos os filtros? Descreva sua estratégia (optimistic update, invalidação seletiva, ou outra).
 
@@ -106,3 +98,25 @@ Para facilitar a validação técnica dos estados de interface, incluí uma **Ba
 3. **Arquitetura de componentes**: Você criou um StatusBadge usado em 4 telas diferentes. Em uma tela ele precisa exibir um tooltip, em outra precisa abrir um dropdown ao clicar, e em uma terceira é apenas visual. Como você projeta esse componente para ser reutilizável sem virar um "mega-componente" cheio de props condicionais?
 
     * **Resposta:** Em vez de colocar toda a lógica de Tooltip ou Dropdown dentro do badge, eu manteria o StatusBadge simples, qualquer outro uso como tooltip ou dropdown, seria só utilizar o StatusBadge envolvido pelo componente necessário, dessa forma a lógica que o componente deve executar fica por conta do componente que envolve a StatusBadge. Por exemplo: `<Tooltip><StatusBadge /></Tooltip>`
+
+---
+
+# Verificação de estados
+
+Para facilitar a validação técnica dos estados de interface, incluí **botões de verificação de estados** no rodapé da tabela (ao lado da paginação). Com ela, é possível alternar instantaneamente:
+
+- **Forçar Erro:** Valida a tela de falha e o comportamento do botão "Tentar Novamente".
+- **Forçar Vazio:** Valida o feedback visual de "Nenhum chamado encontrado".
+
+---
+
+# Testes Unitários
+
+Foi implementado um teste unitário utilizando `Vitest` para garantir o funcionamento do hook principal `useTicketsList`, responsável por filtrar, ordenar e manipular os dados da "API mockada".
+
+Comando para rodar os testes:
+```bash
+pnpm test
+```
+
+---
