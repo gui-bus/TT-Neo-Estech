@@ -14,9 +14,14 @@ interface PageTitleProps {
 
 /**
  * PageTitle component
- * @param {PageTitleProps} props - PageTitle props
- * @returns {JSX.Element} - JSX element
- * @description PageTitle component, used to display a title and description with an icon
+ * @param {PageTitleProps} props - The props object passed to the component
+ * @param {string} props.iconSrc - The source of the icon to be displayed
+ * @param {string} props.title - The title of the page
+ * @param {string} props.description - The description of the page
+ * @param {boolean} props.isLoading - A boolean indicating whether the page is loading or not
+ * @returns {JSX.Element} - The PageTitle component
+ * @description This component renders a page title with an icon, title, and description.
+ * It also provides a skeleton loader when the page is loading.
  */
 const PageTitle = ({
   description,

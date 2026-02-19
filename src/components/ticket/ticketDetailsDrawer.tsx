@@ -3,6 +3,7 @@ import { Ticket } from "@/src/lib/types/tickets";
 import { Avatar, Descriptions, Divider, Drawer } from "antd";
 import { StatusLabel } from "@/src/components/common/statusLabel";
 import { PriorityLabel } from "@/src/components/common/priorityLabel";
+import EventDot from "@/src/components/common/eventDot";
 //#endregion
 
 //#region Interfaces
@@ -11,28 +12,6 @@ interface TicketDetailsDrawerProps {
   isDrawerOpen: boolean;
   setIsDrawerOpen: (open: boolean) => void;
 }
-//#endregion
-
-//#region Components
-const EventDot = ({ selectedTicket }: { selectedTicket: Ticket }) => {
-  return (
-    <div className="relative flex flex-col gap-1">
-      {/* DOT */}
-      <div className="absolute -left-5 top-1 w-3.5 h-3.5 rounded-full bg-brand shadow-sm" />
-
-      {/* DATETIME - TEXT */}
-      <div className="pl-3 flex flex-col gap-1">
-        {/* DATETIME */}
-        <span className="text-[12px] uppercase">
-          {new Date(selectedTicket.abertura).toLocaleString("pt-BR")}
-        </span>
-
-        {/* TEXT */}
-        <span className="text-sm">Abertura do Chamado</span>
-      </div>
-    </div>
-  );
-};
 //#endregion
 
 const TicketDetailsDrawer = ({
