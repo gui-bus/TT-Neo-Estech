@@ -1,7 +1,7 @@
 "use client";
 //#region Imports
 import { useEffect, useState } from "react";
-import { Table, Input, Select, Button, Result } from "antd";
+import { Table, Input, Select, Button, Result, Segmented } from "antd";
 import type { ColumnsType, TablePaginationConfig } from "antd/es/table";
 import { FilterValue, SorterResult } from "antd/es/table/interface";
 import { Ticket } from "@/src/lib/types/tickets";
@@ -12,13 +12,19 @@ import {
   TicketStatus,
 } from "@/src/lib/constants/tickets";
 import { usePathname, useRouter, useSearchParams } from "next/navigation";
-import { PlusIcon } from "@phosphor-icons/react";
+import { ChartBarIcon, PlusIcon, WrenchIcon } from "@phosphor-icons/react";
 import TicketDetailsDrawer from "@/src/components/ticket/ticketDetailsDrawer";
 import PageTitle from "@/src/components/common/pageTitle";
 import { StatusLabel } from "@/src/components/common/statusLabel";
 import { PriorityLabel } from "@/src/components/common/priorityLabel";
 import { NewTicketModal } from "@/src/components/ticket/newTicketForm";
+import { TicketsDashboard } from "./ticketsDashboard";
+import { syncUrlParams } from "@/src/lib/utils/ticketUrl";
 const { Search } = Input;
+//#endregion
+
+//#region Types
+type ViewType = "tecnico" | "gestor";
 //#endregion
 
 export const TicketsTable = () => {
@@ -46,6 +52,17 @@ export const TicketsTable = () => {
     priority: (searchParams.get("priority") as TicketPriority) || undefined,
     area: (searchParams.get("area") as TicketArea) || undefined,
   });
+
+  /**
+   * Returns the initial view type based on the current searchParams.
+   * If the "view" param is not provided, it defaults to "tecnico".
+   * If the "view" param is provided, it must be either "tecnico" or "gestor".
+   * @returns A string with the value of "tecnico" or "gestor".
+   */
+  const getInitialView = (): ViewType => {
+    const v = searchParams.get("view");
+    return v === "gestor" ? "gestor" : "tecnico";
+  };
   //#endregion
 
   //#region useStates
@@ -53,33 +70,35 @@ export const TicketsTable = () => {
   const [isDrawerOpen, setIsDrawerOpen] = useState(false);
   const [params, setParams] = useState<TicketsFilters>(getInitialParams());
   const [isModalOpen, setIsModalOpen] = useState(false);
+
+  const [view, setView] = useState<ViewType>(getInitialView());
   //#endregion
 
   //#region Hooks
-  const { data, isLoading, isError, refetch } = useTicketsList(params);
+  const paramsBasedOnSelectedView =
+    view === "tecnico" ? params : { ...params, page: 1, pageSize: 9999 };
+
+  const { data, isLoading, isError, refetch } = useTicketsList(
+    paramsBasedOnSelectedView,
+  );
   //#endregion
 
   //#region useEffects
   useEffect(() => {
-    const current = new URLSearchParams(Array.from(searchParams.entries()));
-    let hasChanged = false;
+    const currentParams = new URLSearchParams(
+      Array.from(searchParams.entries()),
+    );
 
-    Object.entries(params).forEach(([key, value]) => {
-      const stringValue =
-        value !== undefined && value !== null ? String(value) : "";
-      if (current.get(key) !== stringValue && stringValue !== "") {
-        current.set(key, stringValue);
-        hasChanged = true;
-      } else if (stringValue === "" && current.has(key)) {
-        current.delete(key);
-        hasChanged = true;
-      }
-    });
+    const { newParams, hasChanged } = syncUrlParams(
+      currentParams,
+      view,
+      params,
+    );
 
     if (hasChanged) {
-      router.push(`${pathname}?${current.toString()}`, { scroll: false });
+      router.push(`${pathname}?${newParams.toString()}`, { scroll: false });
     }
-  }, [params, pathname, router, searchParams]);
+  }, [params, view, pathname, router, searchParams]);
   //#endregion
 
   //#region Handle functions
@@ -164,6 +183,8 @@ export const TicketsTable = () => {
 
   const ticketsCount =
     !isLoading && data?.total !== undefined ? `${data.total}` : "";
+
+  const isTechnicalView = view === "tecnico";
   //#endregion
 
   return (
@@ -177,148 +198,187 @@ export const TicketsTable = () => {
             description="Acompanhe o progresso das ordens de serviço abertas."
           />
 
-          {/* ADD TICKET BUTTON */}
-          <Button
-            size="medium"
-            variant="solid"
-            color="primary"
-            icon={<PlusIcon weight="duotone" />}
-            className="w-full md:w-fit uppercase"
-            onClick={() => setIsModalOpen(true)}
-          >
-            Criar chamado
-          </Button>
-        </div>
+          <div className="flex items-center gap-5">
+            {/* ADD TICKET BUTTON */}
+            {isTechnicalView && (
+              <Button
+                size="medium"
+                variant="solid"
+                color="primary"
+                icon={<PlusIcon weight="duotone" />}
+                className="w-full md:w-fit uppercase"
+                onClick={() => setIsModalOpen(true)}
+              >
+                Criar chamado
+              </Button>
+            )}
 
-        {/* FILTER (SEARCH (TEXT INPUT) | STATUS | PRIORITY | AREA | PAGE SIZE) */}
-        <div className="flex flex-col lg:flex-row items-center w-full justify-between gap-5">
-          {/* SEARCH (TEXT INPUT) */}
-          <Search
-            placeholder="Pesquise pelo título do chamado"
-            onSearch={(value) => handleFilterChange("text", value)}
-            defaultValue={params.text}
-            className="w-full lg:max-w-md"
-            allowClear
-          />
-
-          {/* FILTERS (STATUS | PRIORITY | AREA | PAGE SIZE) */}
-          <div className="grid grid-cols-2 lg:flex lg:flex-row gap-5 w-full lg:w-fit">
-            {/* STATUS */}
-            <Select
-              showSearch
-              placeholder="Selecione o status"
-              style={{ width: 140 }}
-              allowClear
-              value={params.status}
-              onChange={(val) => handleFilterChange("status", val)}
+            {/* VIEW SELECTOR */}
+            <Segmented
               options={[
-                { value: "Aberto", label: "Aberto" },
-                { value: "Em andamento", label: "Em andamento" },
-                { value: "Resolvido", label: "Resolvido" },
-                { value: "Cancelado", label: "Cancelado" },
+                {
+                  label: (
+                    <div className="flex items-center gap-2 px-1">
+                      <WrenchIcon size={18} />
+                      <span>Técnico</span>
+                    </div>
+                  ),
+                  value: "tecnico",
+                },
+                {
+                  label: (
+                    <div className="flex items-center gap-2 px-1">
+                      <ChartBarIcon size={18} />
+                      <span>Gestor</span>
+                    </div>
+                  ),
+                  value: "gestor",
+                },
               ]}
-              className="w-full! lg:w-fit!"
-            />
-
-            {/* PRIORITY */}
-            <Select
-              showSearch
-              placeholder="Selecione a prioridade"
-              style={{ width: 140 }}
-              allowClear
-              value={params.priority}
-              onChange={(val) => handleFilterChange("priority", val)}
-              options={[
-                { value: "Crítica", label: "Crítica" },
-                { value: "Alta", label: "Alta" },
-                { value: "Media", label: "Média" },
-                { value: "Baixa", label: "Baixa" },
-              ]}
-              className="w-full! lg:w-fit!"
-            />
-
-            {/* AREA */}
-            <Select
-              showSearch
-              placeholder="Selecione a área"
-              style={{ width: 160 }}
-              allowClear
-              value={params.area}
-              onChange={(val) => handleFilterChange("area", val)}
-              options={[
-                { value: "Energia", label: "Energia" },
-                { value: "Refrigeração", label: "Refrigeração" },
-                { value: "Ar-condicionado", label: "Ar-condicionado" },
-                { value: "Água", label: "Água" },
-              ]}
-              className="w-full! lg:w-fit!"
-            />
-
-            {/* PAGE SIZE */}
-            <Select
-              placeholder="Resultados por página"
-              style={{ width: 110 }}
-              value={params.pageSize}
-              onChange={(val) => handleFilterChange("pageSize", val)}
-              options={[
-                { value: 10, label: "10 por página" },
-                { value: 20, label: "20 por página" },
-                { value: 50, label: "50 por página" },
-              ]}
-              className="w-full! lg:w-fit!"
+              value={view}
+              onChange={(value) => setView(value as "tecnico" | "gestor")}
+              className="p-1 bg-gray-100 rounded-lg"
             />
           </div>
         </div>
 
-        {/* TICKETS COUNT */}
-        <span className="text-sm ml-auto">
-          Total de chamados:{" "}
-          <span className="font-semibold">{ticketsCount}</span>
-        </span>
+        {isTechnicalView && (
+          <>
+            {/* FILTER (SEARCH (TEXT INPUT) | STATUS | PRIORITY | AREA | PAGE SIZE) */}
+            <div className="flex flex-col lg:flex-row items-center w-full justify-between gap-5">
+              {/* SEARCH (TEXT INPUT) */}
+              <Search
+                placeholder="Pesquise pelo título do chamado"
+                onSearch={(value) => handleFilterChange("text", value)}
+                defaultValue={params.text}
+                className="w-full lg:max-w-md"
+                allowClear
+              />
+
+              {/* FILTERS (STATUS | PRIORITY | AREA | PAGE SIZE) */}
+              <div className="grid grid-cols-2 lg:flex lg:flex-row gap-5 w-full lg:w-fit">
+                {/* STATUS */}
+                <Select
+                  showSearch
+                  placeholder="Selecione o status"
+                  style={{ width: 140 }}
+                  allowClear
+                  value={params.status}
+                  onChange={(val) => handleFilterChange("status", val)}
+                  options={[
+                    { value: "Aberto", label: "Aberto" },
+                    { value: "Em andamento", label: "Em andamento" },
+                    { value: "Resolvido", label: "Resolvido" },
+                    { value: "Cancelado", label: "Cancelado" },
+                  ]}
+                  className="w-full! lg:w-fit!"
+                />
+
+                {/* PRIORITY */}
+                <Select
+                  showSearch
+                  placeholder="Selecione a prioridade"
+                  style={{ width: 140 }}
+                  allowClear
+                  value={params.priority}
+                  onChange={(val) => handleFilterChange("priority", val)}
+                  options={[
+                    { value: "Crítica", label: "Crítica" },
+                    { value: "Alta", label: "Alta" },
+                    { value: "Media", label: "Média" },
+                    { value: "Baixa", label: "Baixa" },
+                  ]}
+                  className="w-full! lg:w-fit!"
+                />
+
+                {/* AREA */}
+                <Select
+                  showSearch
+                  placeholder="Selecione a área"
+                  style={{ width: 160 }}
+                  allowClear
+                  value={params.area}
+                  onChange={(val) => handleFilterChange("area", val)}
+                  options={[
+                    { value: "Energia", label: "Energia" },
+                    { value: "Refrigeração", label: "Refrigeração" },
+                    { value: "Ar-condicionado", label: "Ar-condicionado" },
+                    { value: "Água", label: "Água" },
+                  ]}
+                  className="w-full! lg:w-fit!"
+                />
+
+                {/* PAGE SIZE */}
+                <Select
+                  placeholder="Resultados por página"
+                  style={{ width: 110 }}
+                  value={params.pageSize}
+                  onChange={(val) => handleFilterChange("pageSize", val)}
+                  options={[
+                    { value: 10, label: "10 por página" },
+                    { value: 20, label: "20 por página" },
+                    { value: 50, label: "50 por página" },
+                  ]}
+                  className="w-full! lg:w-fit!"
+                />
+              </div>
+            </div>
+
+            {/* TICKETS COUNT */}
+            <span className="text-sm ml-auto">
+              Total de chamados:{" "}
+              <span className="font-semibold">{ticketsCount}</span>
+            </span>
+          </>
+        )}
       </div>
 
       {/* ERROR STATE - TICKETS TABLE */}
-      {isError ? (
-        // ERROR STATE
-        <Result
-          status="error"
-          title="Erro na busca de dados"
-          extra={
-            <Button type="primary" onClick={() => refetch()}>
-              Tentar Novamente
-            </Button>
-          }
-        />
+      {isTechnicalView ? (
+        isError ? (
+          // ERROR STATE
+          <Result
+            status="error"
+            title="Erro na busca de dados"
+            extra={
+              <Button type="primary" onClick={() => refetch()}>
+                Tentar Novamente
+              </Button>
+            }
+          />
+        ) : (
+          // TICKETS TABLE
+          <Table
+            columns={columns}
+            dataSource={data?.tickets}
+            rowKey="id"
+            loading={isLoading}
+            pagination={{
+              current: params.page,
+              pageSize: params.pageSize,
+              total: data?.total,
+              showSizeChanger: false,
+            }}
+            onChange={handleTableChange}
+            onRow={(record) => ({
+              onClick: () => {
+                setSelectedTicket(record);
+                setIsDrawerOpen(true);
+              },
+              className: "cursor-pointer hover:bg-gray-50 transition-colors",
+            })}
+            locale={{
+              emptyText: "Nenhum chamado encontrado",
+              triggerAsc: "Clique para ordenar em ordem crescente.",
+              triggerDesc: "Clique para ordenar em ordem decrescente.",
+              cancelSort: "Clique para cancelar a ordenação.",
+            }}
+            className="shadow-sm rounded-3xl overflow-hidden"
+            scroll={{ x: 1000 }}
+          />
+        )
       ) : (
-        // TICKETS TABLE
-        <Table
-          columns={columns}
-          dataSource={data?.tickets}
-          rowKey="id"
-          loading={isLoading}
-          pagination={{
-            current: params.page,
-            pageSize: params.pageSize,
-            total: data?.total,
-            showSizeChanger: false,
-          }}
-          onChange={handleTableChange}
-          onRow={(record) => ({
-            onClick: () => {
-              setSelectedTicket(record);
-              setIsDrawerOpen(true);
-            },
-            className: "cursor-pointer hover:bg-gray-50 transition-colors",
-          })}
-          locale={{
-            emptyText: "Nenhum chamado encontrado",
-            triggerAsc: "Clique para ordenar em ordem crescente.",
-            triggerDesc: "Clique para ordenar em ordem decrescente.",
-            cancelSort: "Clique para cancelar a ordenação.",
-          }}
-          className="shadow-sm rounded-3xl overflow-hidden"
-          scroll={{ x: 1000 }}
-        />
+        <TicketsDashboard tickets={data?.tickets || []} />
       )}
 
       {/* TICKET DETAILS DRAWER */}
