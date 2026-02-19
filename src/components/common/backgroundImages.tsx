@@ -43,7 +43,6 @@ const BackgroundImages = ({ className }: BackgroundImagesProps) => {
           alt="Background Light"
           fill
           priority
-          quality={85}
           className="object-cover object-center"
         />
       </div>
@@ -54,7 +53,6 @@ const BackgroundImages = ({ className }: BackgroundImagesProps) => {
           alt="Background Dark"
           fill
           priority
-          quality={85}
           className="object-cover object-center"
         />
       </div>
