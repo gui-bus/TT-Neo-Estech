@@ -1,5 +1,6 @@
 //#region Imports
 import { Ticket } from "@/src/lib/types/tickets";
+import { cn } from "@/src/lib/utils/utils";
 //#endregion
 
 //#region Interfaces
@@ -13,7 +14,7 @@ const EventDot = ({ selectedTicket, type }: EventDotProps) => {
   return (
     <div className="relative flex flex-col gap-1">
       {/* DOT */}
-      <div className="absolute -left-5 top-1 w-3.5 h-3.5 rounded-full bg-brand shadow-sm" />
+      <div className={cn("absolute -left-5 top-1 w-3.5 h-3.5 rounded-full shadow-sm", type === "abertura" ? "bg-brand" : "bg-sky-600")} />
 
       {/* DATETIME - TEXT */}
       <div className="pl-3 flex flex-col gap-1">
