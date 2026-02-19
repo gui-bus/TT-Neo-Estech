@@ -2,7 +2,14 @@
 import { Ticket } from "@/src/lib/types/tickets";
 //#endregion
 
-const EventDot = ({ selectedTicket }: { selectedTicket: Ticket }) => {
+//#region Interfaces
+interface EventDotProps {
+  selectedTicket: Ticket;
+  type: "abertura" | "ultimaAtualizacao";
+}
+//#endregion
+
+const EventDot = ({ selectedTicket, type }: EventDotProps) => {
   return (
     <div className="relative flex flex-col gap-1">
       {/* DOT */}
@@ -12,11 +19,19 @@ const EventDot = ({ selectedTicket }: { selectedTicket: Ticket }) => {
       <div className="pl-3 flex flex-col gap-1">
         {/* DATETIME */}
         <span className="text-[12px] uppercase">
-          {new Date(selectedTicket.abertura).toLocaleString("pt-BR")}
+          {new Date(
+            type === "abertura"
+              ? selectedTicket.abertura
+              : selectedTicket.ultimaAtualizacao,
+          ).toLocaleDateString("pt-BR")}
         </span>
 
         {/* TEXT */}
-        <span className="text-sm">Abertura do Chamado</span>
+        <span className="text-sm">
+          {type === "abertura"
+            ? "Abertura do chamado"
+            : "Última atualização do chamado"}
+        </span>
       </div>
     </div>
   );

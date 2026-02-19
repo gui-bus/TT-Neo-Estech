@@ -124,13 +124,16 @@ const TicketDetailsDrawer = ({
               <div className="absolute left-2.75 top-2 bottom-2 w-px bg-black/50 dark:bg-white/50" />
 
               {/* OPEN EVENT */}
-              <EventDot selectedTicket={selectedTicket} />
+              <EventDot selectedTicket={selectedTicket} type="abertura" />
 
               {/* UPDATE EVENT */}
               {selectedTicket.ultimaAtualizacao &&
                 selectedTicket.ultimaAtualizacao !==
                   selectedTicket.abertura && (
-                  <EventDot selectedTicket={selectedTicket} />
+                  <EventDot
+                    selectedTicket={selectedTicket}
+                    type="ultimaAtualizacao"
+                  />
                 )}
             </div>
           </div>
