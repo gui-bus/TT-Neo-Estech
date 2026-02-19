@@ -168,7 +168,7 @@ export const TicketsTable = () => {
     <div className="space-y-6">
       <div className="flex flex-col gap-5">
         {/* TITLE - ADD TICKET BUTTON - TICKETS COUNT */}
-        <div className="flex items-center justify-between w-full">
+        <div className="flex flex-col md:flex-row items-center justify-between w-full gap-5">
           <PageTitle
             iconSrc="/icons/ticket.png"
             title="Visão Geral"
@@ -181,25 +181,29 @@ export const TicketsTable = () => {
             variant="solid"
             color="primary"
             icon={<PlusCircleIcon />}
+            className="w-full md:w-fit"
           >
             Novo chamado
           </Button>
         </div>
 
-        {/* FILTERS */}
-        <div className="flex flex-col md:flex-row items-center w-full justify-between gap-5">
+        {/* FILTER (SEARCH (TEXT INPUT) | STATUS | PRIORITY | AREA | PAGE SIZE) */}
+        <div className="flex flex-col lg:flex-row items-center w-full justify-between gap-5">
+          {/* SEARCH (TEXT INPUT) */}
           <Search
             placeholder="Pesquise por título..."
             onSearch={(value) => handleFilterChange("text", value)}
             defaultValue={params.text}
-            className="w-full max-w-md"
+            className="w-full lg:max-w-md"
             allowClear
           />
 
-          <div className="flex gap-5">
+          {/* FILTERS (STATUS | PRIORITY | AREA | PAGE SIZE) */}
+          <div className="grid grid-cols-2 lg:flex lg:flex-row gap-5 w-full lg:w-fit">
+            {/* STATUS */}
             <Select
               showSearch
-              placeholder="Status"
+              placeholder="Selecione o status"
               style={{ width: 140 }}
               allowClear
               value={params.status}
@@ -210,11 +214,13 @@ export const TicketsTable = () => {
                 { value: "Resolvido", label: "Resolvido" },
                 { value: "Cancelado", label: "Cancelado" },
               ]}
+              className="w-full! lg:w-fit!"
             />
 
+            {/* PRIORITY */}
             <Select
               showSearch
-              placeholder="Prioridade"
+              placeholder="Selecione a prioridade"
               style={{ width: 140 }}
               allowClear
               value={params.priority}
@@ -225,11 +231,13 @@ export const TicketsTable = () => {
                 { value: "Media", label: "Média" },
                 { value: "Baixa", label: "Baixa" },
               ]}
+              className="w-full! lg:w-fit!"
             />
 
+            {/* AREA */}
             <Select
               showSearch
-              placeholder="Área"
+              placeholder="Selecione a área"
               style={{ width: 160 }}
               allowClear
               value={params.area}
@@ -240,18 +248,21 @@ export const TicketsTable = () => {
                 { value: "Ar-condicionado", label: "Ar-condicionado" },
                 { value: "Água", label: "Água" },
               ]}
+              className="w-full! lg:w-fit!"
             />
 
+            {/* PAGE SIZE */}
             <Select
-              placeholder="Itens"
+              placeholder="Resultados por página"
               style={{ width: 110 }}
               value={params.pageSize}
               onChange={(val) => handleFilterChange("pageSize", val)}
               options={[
-                { value: 10, label: "10 / pág" },
-                { value: 20, label: "20 / pág" },
-                { value: 50, label: "50 / pág" },
+                { value: 10, label: "10 por página" },
+                { value: 20, label: "20 por página" },
+                { value: 50, label: "50 por página" },
               ]}
+              className="w-full! lg:w-fit!"
             />
           </div>
         </div>
@@ -296,8 +307,14 @@ export const TicketsTable = () => {
             },
             className: "cursor-pointer hover:bg-gray-50 transition-colors",
           })}
-          locale={{ emptyText: "Nenhum chamado encontrado" }}
+          locale={{
+            emptyText: "Nenhum chamado encontrado",
+            triggerAsc: "Clique para ordenar em ordem crescente.",
+            triggerDesc: "Clique para ordenar em ordem decrescente.",
+            cancelSort: "Clique para cancelar a ordenação.",
+          }}
           className="shadow-sm rounded-3xl overflow-hidden"
+          scroll={{ x: 1000 }}
         />
       )}
 
