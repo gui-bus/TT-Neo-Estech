@@ -58,7 +58,7 @@ const PageTitle = ({
             block
             active
             style={{ height: 24 }}
-            className="w-96!"
+            className="w-76! md:w-96!"
           />
         ) : (
           <p className="text-sm">{description}</p>

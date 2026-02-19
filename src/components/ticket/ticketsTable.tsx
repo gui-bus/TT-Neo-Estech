@@ -224,7 +224,7 @@ export const TicketsTable = () => {
                   block
                   active
                   style={{ height: 32 }}
-                  className="w-44!"
+                  className="w-full! md:w-44!"
                 />
               ) : (
                 <Button
@@ -245,7 +245,7 @@ export const TicketsTable = () => {
                 block
                 active
                 style={{ height: 32 }}
-                className="w-44!"
+                className="w-full! md:w-44!"
               />
             ) : (
               <Segmented
@@ -284,9 +284,13 @@ export const TicketsTable = () => {
             <div className="flex flex-col lg:flex-row items-center w-full justify-between gap-5">
               {/* SEARCH (TEXT INPUT) */}
               {isLoading ? (
-                <div className="w-full lg:max-w-md">
-                  <Skeleton.Input active block style={{ height: 32 }} />
-                </div>
+                <Skeleton.Button
+                    active
+                    block
+                    size="small"
+                    style={{ height: 32 }}
+                    className="w-full! md:w-38!"
+                  />
               ) : (
                 <Search
                   placeholder="Pesquise pelo título do chamado"
@@ -306,7 +310,7 @@ export const TicketsTable = () => {
                     block
                     size="small"
                     style={{ height: 32 }}
-                    className="w-38!"
+                    className="w-full! md:w-38!"
                   />
                 ) : (
                   <Select
@@ -333,7 +337,7 @@ export const TicketsTable = () => {
                     block
                     size="small"
                     style={{ height: 32 }}
-                    className="w-38!"
+                    className="w-full! md:w-38!"
                   />
                 ) : (
                   <Select
@@ -360,7 +364,7 @@ export const TicketsTable = () => {
                     block
                     size="small"
                     style={{ height: 32 }}
-                    className="w-38!"
+                    className="w-full! md:w-38!"
                   />
                 ) : (
                   <Select
@@ -387,7 +391,7 @@ export const TicketsTable = () => {
                     block
                     size="small"
                     style={{ height: 32 }}
-                    className="w-38!"
+                    className="w-full! md:w-38!"
                   />
                 ) : (
                   <Select
@@ -412,7 +416,7 @@ export const TicketsTable = () => {
                 block
                 active
                 style={{ height: 32 }}
-                className="w-44! ml-auto md:hidden"
+                className="w-full! md:w-44! ml-auto md:hidden"
               />
             ) : (
               <span className="text-sm ml-auto md:hidden">
