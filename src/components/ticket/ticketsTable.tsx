@@ -1,7 +1,15 @@
 "use client";
 //#region Imports
 import { useEffect, useState } from "react";
-import { Table, Input, Select, Button, Result, Segmented } from "antd";
+import {
+  Table,
+  Input,
+  Select,
+  Button,
+  Result,
+  Segmented,
+  Skeleton,
+} from "antd";
 import type { ColumnsType, TablePaginationConfig } from "antd/es/table";
 import { FilterValue, SorterResult } from "antd/es/table/interface";
 import { Ticket } from "@/src/lib/types/tickets";
@@ -196,49 +204,67 @@ export const TicketsTable = () => {
             iconSrc="/icons/ticket.png"
             title="Visão Geral"
             description="Acompanhe o progresso das ordens de serviço abertas."
+            isLoading={isLoading}
           />
 
           <div className="flex items-center gap-5">
             {/* ADD TICKET BUTTON */}
-            {isTechnicalView && (
-              <Button
-                size="medium"
-                variant="solid"
-                color="primary"
-                icon={<PlusIcon weight="duotone" />}
-                className="w-full md:w-fit uppercase"
-                onClick={() => setIsModalOpen(true)}
-              >
-                Criar chamado
-              </Button>
-            )}
+            {isTechnicalView &&
+              (isLoading ? (
+                <Skeleton.Button
+                  block
+                  active
+                  style={{ height: 32 }}
+                  className="w-44!"
+                />
+              ) : (
+                <Button
+                  size="medium"
+                  variant="solid"
+                  color="primary"
+                  icon={<PlusIcon weight="duotone" />}
+                  className="w-full md:w-fit uppercase"
+                  onClick={() => setIsModalOpen(true)}
+                >
+                  Criar chamado
+                </Button>
+              ))}
 
             {/* VIEW SELECTOR */}
-            <Segmented
-              options={[
-                {
-                  label: (
-                    <div className="flex items-center gap-2 px-1">
-                      <WrenchIcon size={18} />
-                      <span>Técnico</span>
-                    </div>
-                  ),
-                  value: "tecnico",
-                },
-                {
-                  label: (
-                    <div className="flex items-center gap-2 px-1">
-                      <ChartBarIcon size={18} />
-                      <span>Gestor</span>
-                    </div>
-                  ),
-                  value: "gestor",
-                },
-              ]}
-              value={view}
-              onChange={(value) => setView(value as "tecnico" | "gestor")}
-              className="p-1 bg-gray-100 rounded-lg"
-            />
+            {isLoading ? (
+              <Skeleton.Button
+                block
+                active
+                style={{ height: 32 }}
+                className="w-44!"
+              />
+            ) : (
+              <Segmented
+                options={[
+                  {
+                    label: (
+                      <div className="flex items-center gap-2 px-1">
+                        <WrenchIcon size={18} />
+                        <span>Técnico</span>
+                      </div>
+                    ),
+                    value: "tecnico",
+                  },
+                  {
+                    label: (
+                      <div className="flex items-center gap-2 px-1">
+                        <ChartBarIcon size={18} />
+                        <span>Gestor</span>
+                      </div>
+                    ),
+                    value: "gestor",
+                  },
+                ]}
+                value={view}
+                onChange={(value) => setView(value as "tecnico" | "gestor")}
+                className="p-1 bg-gray-100 rounded-lg"
+              />
+            )}
           </div>
         </div>
 
@@ -247,88 +273,143 @@ export const TicketsTable = () => {
             {/* FILTER (SEARCH (TEXT INPUT) | STATUS | PRIORITY | AREA | PAGE SIZE) */}
             <div className="flex flex-col lg:flex-row items-center w-full justify-between gap-5">
               {/* SEARCH (TEXT INPUT) */}
-              <Search
-                placeholder="Pesquise pelo título do chamado"
-                onSearch={(value) => handleFilterChange("text", value)}
-                defaultValue={params.text}
-                className="w-full lg:max-w-md"
-                allowClear
-              />
+              {isLoading ? (
+                <div className="w-full lg:max-w-md">
+                  <Skeleton.Input active block style={{ height: 32 }} />
+                </div>
+              ) : (
+                <Search
+                  placeholder="Pesquise pelo título do chamado"
+                  onSearch={(value) => handleFilterChange("text", value)}
+                  defaultValue={params.text}
+                  className="w-full lg:max-w-md"
+                  allowClear
+                />
+              )}
 
               {/* FILTERS (STATUS | PRIORITY | AREA | PAGE SIZE) */}
               <div className="grid grid-cols-2 lg:flex lg:flex-row gap-5 w-full lg:w-fit">
                 {/* STATUS */}
-                <Select
-                  showSearch
-                  placeholder="Selecione o status"
-                  style={{ width: 140 }}
-                  allowClear
-                  value={params.status}
-                  onChange={(val) => handleFilterChange("status", val)}
-                  options={[
-                    { value: "Aberto", label: "Aberto" },
-                    { value: "Em andamento", label: "Em andamento" },
-                    { value: "Resolvido", label: "Resolvido" },
-                    { value: "Cancelado", label: "Cancelado" },
-                  ]}
-                  className="w-full! lg:w-fit!"
-                />
+                {isLoading ? (
+                  <Skeleton.Button
+                    active
+                    block
+                    size="small"
+                    style={{ height: 32 }}
+                    className="w-38!"
+                  />
+                ) : (
+                  <Select
+                    showSearch
+                    placeholder="Selecione o status"
+                    style={{ width: 140 }}
+                    allowClear
+                    value={params.status}
+                    onChange={(val) => handleFilterChange("status", val)}
+                    options={[
+                      { value: "Aberto", label: "Aberto" },
+                      { value: "Em andamento", label: "Em andamento" },
+                      { value: "Resolvido", label: "Resolvido" },
+                      { value: "Cancelado", label: "Cancelado" },
+                    ]}
+                    className="w-full! lg:w-fit!"
+                  />
+                )}
 
                 {/* PRIORITY */}
-                <Select
-                  showSearch
-                  placeholder="Selecione a prioridade"
-                  style={{ width: 140 }}
-                  allowClear
-                  value={params.priority}
-                  onChange={(val) => handleFilterChange("priority", val)}
-                  options={[
-                    { value: "Crítica", label: "Crítica" },
-                    { value: "Alta", label: "Alta" },
-                    { value: "Media", label: "Média" },
-                    { value: "Baixa", label: "Baixa" },
-                  ]}
-                  className="w-full! lg:w-fit!"
-                />
+                {isLoading ? (
+                  <Skeleton.Button
+                    active
+                    block
+                    size="small"
+                    style={{ height: 32 }}
+                    className="w-38!"
+                  />
+                ) : (
+                  <Select
+                    showSearch
+                    placeholder="Selecione a prioridade"
+                    style={{ width: 140 }}
+                    allowClear
+                    value={params.priority}
+                    onChange={(val) => handleFilterChange("priority", val)}
+                    options={[
+                      { value: "Crítica", label: "Crítica" },
+                      { value: "Alta", label: "Alta" },
+                      { value: "Media", label: "Média" },
+                      { value: "Baixa", label: "Baixa" },
+                    ]}
+                    className="w-full! lg:w-fit!"
+                  />
+                )}
 
                 {/* AREA */}
-                <Select
-                  showSearch
-                  placeholder="Selecione a área"
-                  style={{ width: 160 }}
-                  allowClear
-                  value={params.area}
-                  onChange={(val) => handleFilterChange("area", val)}
-                  options={[
-                    { value: "Energia", label: "Energia" },
-                    { value: "Refrigeração", label: "Refrigeração" },
-                    { value: "Ar-condicionado", label: "Ar-condicionado" },
-                    { value: "Água", label: "Água" },
-                  ]}
-                  className="w-full! lg:w-fit!"
-                />
+                {isLoading ? (
+                  <Skeleton.Button
+                    active
+                    block
+                    size="small"
+                    style={{ height: 32 }}
+                    className="w-38!"
+                  />
+                ) : (
+                  <Select
+                    showSearch
+                    placeholder="Selecione a área"
+                    style={{ width: 160 }}
+                    allowClear
+                    value={params.area}
+                    onChange={(val) => handleFilterChange("area", val)}
+                    options={[
+                      { value: "Energia", label: "Energia" },
+                      { value: "Refrigeração", label: "Refrigeração" },
+                      { value: "Ar-condicionado", label: "Ar-condicionado" },
+                      { value: "Água", label: "Água" },
+                    ]}
+                    className="w-full! lg:w-fit!"
+                  />
+                )}
 
                 {/* PAGE SIZE */}
-                <Select
-                  placeholder="Resultados por página"
-                  style={{ width: 110 }}
-                  value={params.pageSize}
-                  onChange={(val) => handleFilterChange("pageSize", val)}
-                  options={[
-                    { value: 10, label: "10 por página" },
-                    { value: 20, label: "20 por página" },
-                    { value: 50, label: "50 por página" },
-                  ]}
-                  className="w-full! lg:w-fit!"
-                />
+                {isLoading ? (
+                  <Skeleton.Button
+                    active
+                    block
+                    size="small"
+                    style={{ height: 32 }}
+                    className="w-38!"
+                  />
+                ) : (
+                  <Select
+                    placeholder="Resultados por página"
+                    style={{ width: 110 }}
+                    value={params.pageSize}
+                    onChange={(val) => handleFilterChange("pageSize", val)}
+                    options={[
+                      { value: 10, label: "10 por página" },
+                      { value: 20, label: "20 por página" },
+                      { value: 50, label: "50 por página" },
+                    ]}
+                    className="w-full! lg:w-fit!"
+                  />
+                )}
               </div>
             </div>
 
             {/* TICKETS COUNT */}
-            <span className="text-sm ml-auto">
-              Total de chamados:{" "}
-              <span className="font-semibold">{ticketsCount}</span>
-            </span>
+            {isLoading ? (
+              <Skeleton.Button
+                block
+                active
+                style={{ height: 32 }}
+                className="w-44! ml-auto"
+              />
+            ) : (
+              <span className="text-sm ml-auto">
+                Total de chamados:{" "}
+                <span className="font-semibold">{ticketsCount}</span>
+              </span>
+            )}
           </>
         )}
       </div>
@@ -346,8 +427,10 @@ export const TicketsTable = () => {
               </Button>
             }
           />
+        ) : // TICKETS TABLE
+        isLoading ? (
+          <Skeleton.Button active block style={{ height: 600 }} />
         ) : (
-          // TICKETS TABLE
           <Table
             columns={columns}
             dataSource={data?.tickets}
@@ -378,7 +461,7 @@ export const TicketsTable = () => {
           />
         )
       ) : (
-        <TicketsDashboard tickets={data?.tickets || []} />
+        <TicketsDashboard tickets={data?.tickets || []} isLoading={isLoading} />
       )}
 
       {/* TICKET DETAILS DRAWER */}
