@@ -13,7 +13,7 @@ interface ContainerProps {
 
 const Container = ({ children, className, id }: ContainerProps) => {
   return (
-    <main className={cn("p-5 lg:p-10", className)} id={id}>
+    <main className={cn("p-5", className)} id={id}>
       {children}
     </main>
   );
