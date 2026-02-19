@@ -204,8 +204,8 @@ export const TicketsTable = () => {
   //#endregion
 
   return (
-    <div className="space-y-6">
-      <div className="flex flex-col gap-5">
+    <div className="space-y-6 h-full flex flex-col w-full items-center justify-center">
+      <div className="flex flex-col gap-5 w-full">
         {/* TITLE - ADD TICKET BUTTON - TICKETS COUNT */}
         <div className="flex flex-col md:flex-row items-center justify-between w-full gap-5">
           <PageTitle
@@ -285,12 +285,12 @@ export const TicketsTable = () => {
               {/* SEARCH (TEXT INPUT) */}
               {isLoading ? (
                 <Skeleton.Button
-                    active
-                    block
-                    size="small"
-                    style={{ height: 32 }}
-                    className="w-full! md:w-38!"
-                  />
+                  active
+                  block
+                  size="small"
+                  style={{ height: 32 }}
+                  className="w-full! md:w-110!"
+                />
               ) : (
                 <Search
                   placeholder="Pesquise pelo título do chamado"
@@ -429,100 +429,102 @@ export const TicketsTable = () => {
       </div>
 
       {/* ERROR STATE - TICKETS TABLE */}
-      {isTechnicalView ? (
-        isError || forceError ? (
-          <Result
-            status="error"
-            title="Falha na sincronização"
-            subTitle="Ocorreu um erro ao buscar dados atualizados, por favor, clique abaixo para tentar novamente."
-            extra={
-              <Button
-                onClick={() => {
-                  setForceError(false);
-                  refetch();
-                }}
-                variant="outlined"
-                icon={<ArrowsClockwiseIcon weight="duotone" />}
-              >
-                Recarregar dados
-              </Button>
-            }
-          />
-        ) : isLoading ? (
-          <div className="bg-white dark:bg-neutral-900 p-6 shadow-sm rounded-3xl">
-            <Skeleton.Button active block style={{ height: 600 }} />
-          </div>
+      <div className="w-full">
+        {isTechnicalView ? (
+          isError || forceError ? (
+            <Result
+              status="error"
+              title="Falha na sincronização"
+              subTitle="Ocorreu um erro ao buscar dados atualizados, por favor, clique abaixo para tentar novamente."
+              extra={
+                <Button
+                  onClick={() => {
+                    setForceError(false);
+                    refetch();
+                  }}
+                  variant="outlined"
+                  icon={<ArrowsClockwiseIcon weight="duotone" />}
+                >
+                  Recarregar dados
+                </Button>
+              }
+            />
+          ) : isLoading ? (
+            <div className="bg-white dark:bg-neutral-900 p-6 shadow-sm rounded-3xl">
+              <Skeleton.Button active block style={{ height: 600 }} />
+            </div>
+          ) : (
+            <Table
+              columns={columns}
+              dataSource={forceEmpty ? [] : data?.tickets}
+              rowKey="id"
+              loading={isLoading}
+              pagination={{
+                current: params.page,
+                pageSize: params.pageSize,
+                total: forceEmpty ? 0 : data?.total,
+                showSizeChanger: false,
+                showTotal: (total) => (
+                  <div className="flex items-center gap-3 mr-auto mt-1">
+                    <span className="text-xs uppercase mr-2">
+                      VERIFICAÇÃO DE ESTADOS:
+                    </span>
+
+                    <Button
+                      size="small"
+                      danger={!forceError}
+                      type={forceError ? "primary" : "default"}
+                      onClick={() => setForceError(!forceError)}
+                      className="text-[10px] h-7"
+                    >
+                      {forceError ? "Sair do Erro" : "Forçar Erro"}
+                    </Button>
+                    <Button
+                      size="small"
+                      type={forceEmpty ? "primary" : "default"}
+                      onClick={() => setForceEmpty(!forceEmpty)}
+                      className="text-[10px] h-7"
+                    >
+                      {forceEmpty ? "Mostrar Dados" : "Forçar Vazio"}
+                    </Button>
+
+                    <span className="ml-4 italic text-xs hidden md:flex opacity-50">
+                      Número de chamados encontrados: {total}
+                    </span>
+                  </div>
+                ),
+              }}
+              onChange={handleTableChange}
+              onRow={(record) => ({
+                onClick: () => {
+                  setSelectedTicket(record);
+                  setIsDrawerOpen(true);
+                },
+                className: "cursor-pointer hover:bg-gray-50 transition-colors",
+              })}
+              locale={{
+                emptyText: (
+                  <Result
+                    status="info"
+                    title="Nenhum resultado para sua busca"
+                    subTitle="Não encontramos chamados com os filtros atuais. Experimente ajustar os termos de pesquisa ou remover alguns filtros."
+                  />
+                ),
+                triggerAsc: "Clique para ordenar em ordem crescente.",
+                triggerDesc: "Clique para ordenar em ordem decrescente.",
+                cancelSort: "Clique para cancelar a ordenação.",
+              }}
+              className="shadow-sm rounded-3xl overflow-hidden"
+              scroll={{ x: 1000 }}
+            />
+          )
         ) : (
-          <Table
-            columns={columns}
-            dataSource={forceEmpty ? [] : data?.tickets}
-            rowKey="id"
-            loading={isLoading}
-            pagination={{
-              current: params.page,
-              pageSize: params.pageSize,
-              total: forceEmpty ? 0 : data?.total,
-              showSizeChanger: false,
-              showTotal: (total) => (
-                <div className="flex items-center gap-3 mr-auto mt-1">
-                  <span className="text-xs uppercase mr-2">
-                    VERIFICAÇÃO DE ESTADOS:
-                  </span>
-
-                  <Button
-                    size="small"
-                    danger={!forceError}
-                    type={forceError ? "primary" : "default"}
-                    onClick={() => setForceError(!forceError)}
-                    className="text-[10px] h-7"
-                  >
-                    {forceError ? "Sair do Erro" : "Forçar Erro"}
-                  </Button>
-                  <Button
-                    size="small"
-                    type={forceEmpty ? "primary" : "default"}
-                    onClick={() => setForceEmpty(!forceEmpty)}
-                    className="text-[10px] h-7"
-                  >
-                    {forceEmpty ? "Mostrar Dados" : "Forçar Vazio"}
-                  </Button>
-
-                  <span className="ml-4 italic text-xs hidden md:flex opacity-50">
-                    Número de chamados encontrados: {total}
-                  </span>
-                </div>
-              ),
-            }}
-            onChange={handleTableChange}
-            onRow={(record) => ({
-              onClick: () => {
-                setSelectedTicket(record);
-                setIsDrawerOpen(true);
-              },
-              className: "cursor-pointer hover:bg-gray-50 transition-colors",
-            })}
-            locale={{
-              emptyText: (
-                <Result
-                  status="info"
-                  title="Nenhum resultado para sua busca"
-                  subTitle="Não encontramos chamados com os filtros atuais. Experimente ajustar os termos de pesquisa ou remover alguns filtros."
-                />
-              ),
-              triggerAsc: "Clique para ordenar em ordem crescente.",
-              triggerDesc: "Clique para ordenar em ordem decrescente.",
-              cancelSort: "Clique para cancelar a ordenação.",
-            }}
-            className="shadow-sm rounded-3xl overflow-hidden"
-            scroll={{ x: 1000 }}
+          <TicketsDashboard
+            tickets={forceEmpty ? [] : data?.tickets || []}
+            isLoading={isLoading}
           />
-        )
-      ) : (
-        <TicketsDashboard
-          tickets={forceEmpty ? [] : data?.tickets || []}
-          isLoading={isLoading}
-        />
-      )}
+        )}
+      </div>
 
       {/* TICKET DETAILS DRAWER */}
       <TicketDetailsDrawer
