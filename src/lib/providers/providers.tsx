@@ -3,7 +3,7 @@
 import { AntdRegistry } from "@ant-design/nextjs-registry";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { ReactQueryDevtools } from "@tanstack/react-query-devtools";
-import { ConfigProvider, theme as antdTheme } from "antd";
+import { App, ConfigProvider, theme as antdTheme } from "antd";
 import { useTheme } from "next-themes";
 import { useState } from "react";
 //#endregion
@@ -38,7 +38,7 @@ export default function Providers({ children }: { children: React.ReactNode }) {
             token: { colorPrimary: "#EC6725" },
           }}
         >
-          {children}
+          <App>{children}</App>
         </ConfigProvider>
       </AntdRegistry>
 
