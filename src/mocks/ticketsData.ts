@@ -40,9 +40,23 @@ const generateMockedTickets = (count: number): Ticket[] => {
     avatar: faker.image.avatar(),
   }));
 };
+
+/**
+ * Adds a new ticket to the mocked tickets array.
+ *
+ * The new ticket is added to the beginning of the array.
+ * This is useful for testing purposes, as it allows us to
+ * easily add new tickets to the mocked data without having to
+ * manually update the mocked data array.
+ *
+ * @param newTicket - The new ticket to add.
+ */
+export const addTicketToMock = (newTicket: Ticket) => {
+  mockedTickets = [newTicket, ...mockedTickets];
+};
 //#endregion
 
-export const mockedTickets: Ticket[] = [
+export let mockedTickets: Ticket[] = [
   ...(seedData as Ticket[]),
   ...generateMockedTickets(1000),
 ];

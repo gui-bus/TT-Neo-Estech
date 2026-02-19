@@ -12,11 +12,12 @@ import {
   TicketStatus,
 } from "@/src/lib/constants/tickets";
 import { usePathname, useRouter, useSearchParams } from "next/navigation";
-import { PlusCircleIcon } from "@phosphor-icons/react";
+import { PlusIcon } from "@phosphor-icons/react";
 import TicketDetailsDrawer from "@/src/components/ticket/ticketDetailsDrawer";
 import PageTitle from "@/src/components/common/pageTitle";
 import { StatusLabel } from "@/src/components/common/statusLabel";
 import { PriorityLabel } from "@/src/components/common/priorityLabel";
+import { NewTicketModal } from "@/src/components/ticket/newTicketForm";
 const { Search } = Input;
 //#endregion
 
@@ -51,6 +52,7 @@ export const TicketsTable = () => {
   const [selectedTicket, setSelectedTicket] = useState<Ticket | null>(null);
   const [isDrawerOpen, setIsDrawerOpen] = useState(false);
   const [params, setParams] = useState<TicketsFilters>(getInitialParams());
+  const [isModalOpen, setIsModalOpen] = useState(false);
   //#endregion
 
   //#region Hooks
@@ -177,13 +179,14 @@ export const TicketsTable = () => {
 
           {/* ADD TICKET BUTTON */}
           <Button
-            size="large"
+            size="medium"
             variant="solid"
             color="primary"
-            icon={<PlusCircleIcon />}
-            className="w-full md:w-fit"
+            icon={<PlusIcon weight="duotone" />}
+            className="w-full md:w-fit uppercase"
+            onClick={() => setIsModalOpen(true)}
           >
-            Novo chamado
+            Criar chamado
           </Button>
         </div>
 
@@ -323,6 +326,13 @@ export const TicketsTable = () => {
         selectedTicket={selectedTicket}
         isDrawerOpen={isDrawerOpen}
         setIsDrawerOpen={setIsDrawerOpen}
+      />
+
+      {/* NEW TICKET MODAL */}
+      <NewTicketModal
+        isOpen={isModalOpen}
+        onClose={() => setIsModalOpen(false)}
+        onSuccess={() => refetch()}
       />
     </div>
   );
