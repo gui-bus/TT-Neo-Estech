@@ -1,6 +1,8 @@
 //#region Imports
+import { Suspense } from "react";
 import Container from "@/src/components/common/container";
 import { TicketsTable } from "@/src/components/ticket/ticketsTable";
+import { Skeleton } from "antd";
 //#endregion
 
 //#region Metadata
@@ -12,7 +14,9 @@ export const metadata = {
 export default function TicketsPage() {
   return (
     <Container>
-      <TicketsTable />
+      <Suspense fallback={<Skeleton active />}>
+        <TicketsTable />
+      </Suspense>
     </Container>
   );
 }
