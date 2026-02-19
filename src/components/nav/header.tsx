@@ -19,14 +19,14 @@ export const Header = () => {
         <nav className="hidden md:flex gap-5 text-sm font-medium pr-8">
           <Link
             href="/"
-            className="hover:-translate-y-1 transition-all duration-300 hover:text-brand"
+            className="hover:-translate-y-1 transition-all duration-300 hover:text-brand! text-black! dark:text-white!"
           >
             Dashboard
           </Link>
 
           <Link
             href="/chamados"
-            className="hover:-translate-y-1 transition-all duration-300 hover:text-brand"
+            className="hover:-translate-y-1 transition-all duration-300 hover:text-brand! text-black! dark:text-white!"
           >
             Chamados
           </Link>
