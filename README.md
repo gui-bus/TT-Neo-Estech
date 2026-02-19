@@ -82,6 +82,9 @@ Foi implementado a persistência de dados durante o fetch de novas páginas, man
    * **Customização de Tema:** Exploraria mais a fundo as customizações do Ant Design para criar uma identidade visual única.
    * **Exploração de Componentes Avançados:** Com mais tempo de estudo da documentação, integraria componentes mais complexos para enriquecer a experiência de uso e a robustez do sistema.
 
+3. **Novas Funcionalidades e CRUD Completo:**
+   * **Gerenciamento de Ciclo de Vida**: Implementaria as ações de editar e excluir chamados diretamente na tabela ou no drawer de detalhes. Isso fecharia o ciclo de operações do sistema, permitindo correções de dados e limpeza de tickets abertos indevidamente.
+
 ---
 
 # Respostas conceituais
