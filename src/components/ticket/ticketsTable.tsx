@@ -509,7 +509,7 @@ export const TicketsTable = () => {
               triggerDesc: "Clique para ordenar em ordem decrescente.",
               cancelSort: "Clique para cancelar a ordenação.",
             }}
-            className="shadow-sm rounded-3xl overflow-hidden border border-gray-100"
+            className="shadow-sm rounded-3xl overflow-hidden"
             scroll={{ x: 1000 }}
           />
         )
