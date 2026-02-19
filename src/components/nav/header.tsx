@@ -7,35 +7,33 @@ import ThemeSwitcher from "@/src/components/theme/themeSwitcher";
 
 export const Header = () => {
   return (
-    <header className="w-full drop-shadow-xl bg-brand">
-      <div className="max-w-7xl mx-auto px-4 h-16 flex items-center justify-between">
-        {/* LOGO */}
-        <Link href="/" className="flex items-center gap-2">
-          <Image src="/neoestech.png" alt="Logo" width={60} height={60} />
-        </Link>
+    <header className="w-full drop-shadow-xl px-4 h-20 flex items-center justify-between">
+      {/* LOGO */}
+      <Link href="/" className="flex items-center gap-2">
+        <Image src="/neoestech.png" alt="Logo" width={50} height={50} />
+      </Link>
 
-        {/* LINKS - THEME SWITCHER */}
-        <div className="flex items-center gap-6">
-          {/* LINKS */}
-          <nav className="hidden md:flex gap-4 text-sm font-medium">
-            <Link
-              href="/"
-              className="text-white hover:-translate-y-1 transition-all duration-300"
-            >
-              Dashboard
-            </Link>
+      {/* LINKS - THEME SWITCHER */}
+      <div className="flex items-center gap-5 divide-x">
+        {/* LINKS */}
+        <nav className="hidden md:flex gap-5 text-sm font-medium pr-8">
+          <Link
+            href="/"
+            className="hover:-translate-y-1 transition-all duration-300 hover:text-brand"
+          >
+            Dashboard
+          </Link>
 
-            <Link
-              href="/chamados"
-              className="text-white hover:-translate-y-1 transition-all duration-300"
-            >
-              Chamados
-            </Link>
-          </nav>
+          <Link
+            href="/chamados"
+            className="hover:-translate-y-1 transition-all duration-300 hover:text-brand"
+          >
+            Chamados
+          </Link>
+        </nav>
 
-          {/* THEME SWITCHER */}
-          <ThemeSwitcher iconClassName="text-white" />
-        </div>
+        {/* THEME SWITCHER */}
+        <ThemeSwitcher />
       </div>
     </header>
   );
