@@ -1,26 +1,13 @@
 //#region Imports
 import { Tag } from "antd";
 import { TicketStatus } from "@/src/lib/constants/tickets";
-import {
-  CircleDashedIcon,
-  ClockClockwiseIcon,
-  CheckCircleIcon,
-  XCircleIcon,
-  IconProps,
-} from "@phosphor-icons/react";
-import { ReactElement } from "react";
+import { statusMap } from "@/src/lib/constants/maps";
 //#endregion
 
 //#region Interfaces
 interface StatusLabelProps {
   status: TicketStatus;
   className?: string;
-}
-
-interface StatusConfigItem {
-  color: string;
-  label: string;
-  icon: ReactElement<IconProps>;
 }
 //#endregion
 
@@ -35,29 +22,6 @@ interface StatusConfigItem {
  */
 export const StatusLabel = ({ status, className }: StatusLabelProps) => {
   //#region Maps
-  const statusMap: Record<TicketStatus, StatusConfigItem> = {
-    Aberto: {
-      color: "blue",
-      label: "Aberto",
-      icon: <CircleDashedIcon size={14} weight="duotone" />,
-    },
-    "Em andamento": {
-      color: "orange",
-      label: "Em andamento",
-      icon: <ClockClockwiseIcon size={14} weight="duotone" />,
-    },
-    Resolvido: {
-      color: "green",
-      label: "Resolvido",
-      icon: <CheckCircleIcon size={14} weight="duotone" />,
-    },
-    Cancelado: {
-      color: "red",
-      label: "Cancelado",
-      icon: <XCircleIcon size={14} weight="duotone" />,
-    },
-  };
-
   const statusDetails = statusMap[status];
   //#endregion
 

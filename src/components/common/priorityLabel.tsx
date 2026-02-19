@@ -1,25 +1,12 @@
 //#region Imports
+import { priorityMap } from "@/src/lib/constants/maps";
 import { TicketPriority } from "@/src/lib/constants/tickets";
-import {
-  CaretDoubleUpIcon,
-  IconProps,
-  CaretUpIcon,
-  EqualsIcon,
-  CaretDownIcon,
-} from "@phosphor-icons/react";
-import { ReactElement } from "react";
 //#endregion
 
 //#region Interfaces
 interface PriorityLabelProps {
   priority: TicketPriority;
   className?: string;
-}
-
-interface PriorityConfigItem {
-  color: string;
-  label: string;
-  icon: ReactElement<IconProps>;
 }
 //#endregion
 
@@ -33,29 +20,6 @@ interface PriorityConfigItem {
  */
 export const PriorityLabel = ({ priority, className }: PriorityLabelProps) => {
   //#region Maps
-  const priorityMap: Record<TicketPriority, PriorityConfigItem> = {
-    Crítica: {
-      color: "#f5222d",
-      label: "Crítica",
-      icon: <CaretDoubleUpIcon size={16} weight="duotone" />,
-    },
-    Alta: {
-      color: "#faad14",
-      label: "Alta",
-      icon: <CaretUpIcon size={16} weight="duotone" />,
-    },
-    Média: {
-      color: "#1890ff",
-      label: "Média",
-      icon: <EqualsIcon size={16} weight="duotone" />,
-    },
-    Baixa: {
-      color: "#8c8c8c",
-      label: "Baixa",
-      icon: <CaretDownIcon size={16} weight="duotone" />,
-    },
-  };
-
   const priorityDetails = priorityMap[priority];
   //#endregion
 
