@@ -91,7 +91,7 @@ export const NewTicketModal = ({
       onCancel={onClose}
       footer={null}
       destroyOnHidden
-      className="w-full! max-w-xl!"
+      className="w-full! max-w-xl! p-5!"
     >
       <Form
         layout="vertical"

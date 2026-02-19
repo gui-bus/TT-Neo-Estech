@@ -216,7 +216,7 @@ export const TicketsTable = () => {
           />
 
           {/* ADD TICKET BUTTON - VIEW SELECTOR */}
-          <div className="flex items-center gap-5">
+          <div className="flex flex-col-reverse md:flex-row items-center gap-5 w-full">
             {/* ADD TICKET BUTTON */}
             {isTechnicalView &&
               (isLoading ? (

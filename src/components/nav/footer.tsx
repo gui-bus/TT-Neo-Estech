@@ -5,7 +5,7 @@ import Link from "next/link";
 
 export const Footer = () => {
   return (
-    <footer className="w-full px-4 h-16 flex items-center justify-between border-t border-white/10 mt-auto">
+    <footer className="w-full px-4 h-16 flex flex-col md:flex-row items-center justify-between border-t border-white/10 mt-auto pb-5">
       {/* COPYRIGHT */}
       <div className="text-xs opacity-50 cursor-default">
         © 2026 NEO Estech. Todos os direitos reservados.
