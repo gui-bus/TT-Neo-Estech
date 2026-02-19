@@ -20,7 +20,12 @@ import {
   TicketStatus,
 } from "@/src/lib/constants/tickets";
 import { usePathname, useRouter, useSearchParams } from "next/navigation";
-import { ChartBarIcon, PlusIcon, WrenchIcon } from "@phosphor-icons/react";
+import {
+  ArrowsClockwiseIcon,
+  ChartBarIcon,
+  PlusIcon,
+  WrenchIcon,
+} from "@phosphor-icons/react";
 import TicketDetailsDrawer from "@/src/components/ticket/ticketDetailsDrawer";
 import PageTitle from "@/src/components/common/pageTitle";
 import { StatusLabel } from "@/src/components/common/statusLabel";
@@ -80,6 +85,9 @@ export const TicketsTable = () => {
   const [isModalOpen, setIsModalOpen] = useState(false);
 
   const [view, setView] = useState<ViewType>(getInitialView());
+
+  const [forceError, setForceError] = useState(false);
+  const [forceEmpty, setForceEmpty] = useState(false);
   //#endregion
 
   //#region Hooks
@@ -207,6 +215,7 @@ export const TicketsTable = () => {
             isLoading={isLoading}
           />
 
+          {/* ADD TICKET BUTTON - VIEW SELECTOR */}
           <div className="flex items-center gap-5">
             {/* ADD TICKET BUTTON */}
             {isTechnicalView &&
@@ -258,6 +267,7 @@ export const TicketsTable = () => {
                       </div>
                     ),
                     value: "gestor",
+                    disabled: forceError || forceEmpty,
                   },
                 ]}
                 value={view}
@@ -402,10 +412,10 @@ export const TicketsTable = () => {
                 block
                 active
                 style={{ height: 32 }}
-                className="w-44! ml-auto"
+                className="w-44! ml-auto md:hidden"
               />
             ) : (
-              <span className="text-sm ml-auto">
+              <span className="text-sm ml-auto md:hidden">
                 Total de chamados:{" "}
                 <span className="font-semibold">{ticketsCount}</span>
               </span>
@@ -416,31 +426,68 @@ export const TicketsTable = () => {
 
       {/* ERROR STATE - TICKETS TABLE */}
       {isTechnicalView ? (
-        isError ? (
-          // ERROR STATE
+        isError || forceError ? (
           <Result
             status="error"
-            title="Erro na busca de dados"
+            title="Falha na sincronização"
+            subTitle="Ocorreu um erro ao buscar dados atualizados, por favor, clique abaixo para tentar novamente."
             extra={
-              <Button type="primary" onClick={() => refetch()}>
-                Tentar Novamente
+              <Button
+                onClick={() => {
+                  setForceError(false);
+                  refetch();
+                }}
+                variant="outlined"
+                icon={<ArrowsClockwiseIcon weight="duotone" />}
+              >
+                Recarregar dados
               </Button>
             }
           />
-        ) : // TICKETS TABLE
-        isLoading ? (
-          <Skeleton.Button active block style={{ height: 600 }} />
+        ) : isLoading ? (
+          <div className="bg-white p-6 shadow-sm rounded-3xl border border-gray-100">
+            <Skeleton.Button active block style={{ height: 600 }} />
+          </div>
         ) : (
           <Table
             columns={columns}
-            dataSource={data?.tickets}
+            dataSource={forceEmpty ? [] : data?.tickets}
             rowKey="id"
             loading={isLoading}
             pagination={{
               current: params.page,
               pageSize: params.pageSize,
-              total: data?.total,
+              total: forceEmpty ? 0 : data?.total,
               showSizeChanger: false,
+              showTotal: (total) => (
+                <div className="flex items-center gap-3 mr-auto mt-1">
+                  <span className="text-xs uppercase mr-2">
+                    VERIFICAÇÃO DE ESTADOS:
+                  </span>
+
+                  <Button
+                    size="small"
+                    danger={!forceError}
+                    type={forceError ? "primary" : "default"}
+                    onClick={() => setForceError(!forceError)}
+                    className="text-[10px] h-7"
+                  >
+                    {forceError ? "Sair do Erro" : "Forçar Erro"}
+                  </Button>
+                  <Button
+                    size="small"
+                    type={forceEmpty ? "primary" : "default"}
+                    onClick={() => setForceEmpty(!forceEmpty)}
+                    className="text-[10px] h-7"
+                  >
+                    {forceEmpty ? "Mostrar Dados" : "Forçar Vazio"}
+                  </Button>
+
+                  <span className="ml-4 italic text-xs hidden md:flex opacity-50">
+                    Número de chamados encontrados: {total}
+                  </span>
+                </div>
+              ),
             }}
             onChange={handleTableChange}
             onRow={(record) => ({
@@ -451,17 +498,26 @@ export const TicketsTable = () => {
               className: "cursor-pointer hover:bg-gray-50 transition-colors",
             })}
             locale={{
-              emptyText: "Nenhum chamado encontrado",
+              emptyText: (
+                <Result
+                  status="info"
+                  title="Nenhum resultado para sua busca"
+                  subTitle="Não encontramos chamados com os filtros atuais. Experimente ajustar os termos de pesquisa ou remover alguns filtros."
+                />
+              ),
               triggerAsc: "Clique para ordenar em ordem crescente.",
               triggerDesc: "Clique para ordenar em ordem decrescente.",
               cancelSort: "Clique para cancelar a ordenação.",
             }}
-            className="shadow-sm rounded-3xl overflow-hidden"
+            className="shadow-sm rounded-3xl overflow-hidden border border-gray-100"
             scroll={{ x: 1000 }}
           />
         )
       ) : (
-        <TicketsDashboard tickets={data?.tickets || []} isLoading={isLoading} />
+        <TicketsDashboard
+          tickets={forceEmpty ? [] : data?.tickets || []}
+          isLoading={isLoading}
+        />
       )}
 
       {/* TICKET DETAILS DRAWER */}
