@@ -5,6 +5,7 @@ import "./globals.css";
 import Providers from "@/src/lib/providers/providers";
 import { ThemeProvider } from "next-themes";
 import { Header } from "@/src/components/nav/header";
+import BackgroundImages from "../components/common/backgroundImages";
 //#endregion
 
 //#region Fonts
@@ -47,6 +48,7 @@ export default function RootLayout({
           <Providers>
             <Header />
             {children}
+            <BackgroundImages />
           </Providers>
         </ThemeProvider>
       </body>
