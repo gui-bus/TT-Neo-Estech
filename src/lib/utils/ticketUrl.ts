@@ -1,5 +1,5 @@
 //#region Imports
-import { TicketsFilters } from "@/src/lib/hooks/useTicketsList";
+import { TicketParams } from "@/src/lib/hooks/useTicketsList";
 //#endregion
 
 /**
@@ -11,7 +11,7 @@ import { TicketsFilters } from "@/src/lib/hooks/useTicketsList";
  *
  * @param {URLSearchParams} currentParams - The existing search parameters from the current URL.
  * @param {string} view - The current active layout view (e.g., 'técnico' or 'gestor').
- * @param {TicketsFilters} filters - An object containing the current filter values.
+ * @param {TicketParams} filters - An object containing the current filter values.
  * * @returns {Object} An object containing the sync results.
  * @returns {URLSearchParams} .newParams - A new instance of URLSearchParams with updated values.
  * @returns {boolean} .hasChanged - A flag indicating if the URL parameters have been modified.
@@ -19,7 +19,7 @@ import { TicketsFilters } from "@/src/lib/hooks/useTicketsList";
 export const syncUrlParams = (
   currentParams: URLSearchParams,
   view: string,
-  filters: TicketsFilters,
+  filters: TicketParams,
 ): { newParams: URLSearchParams; hasChanged: boolean } => {
   const params = new URLSearchParams(currentParams);
   let hasChanged = false;
