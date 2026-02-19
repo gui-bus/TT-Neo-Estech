@@ -191,7 +191,7 @@ export const TicketsTable = () => {
         <div className="flex flex-col lg:flex-row items-center w-full justify-between gap-5">
           {/* SEARCH (TEXT INPUT) */}
           <Search
-            placeholder="Pesquise por título..."
+            placeholder="Pesquise pelo título do chamado"
             onSearch={(value) => handleFilterChange("text", value)}
             defaultValue={params.text}
             className="w-full lg:max-w-md"
