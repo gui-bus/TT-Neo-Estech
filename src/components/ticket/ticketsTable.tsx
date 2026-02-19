@@ -449,7 +449,7 @@ export const TicketsTable = () => {
             }
           />
         ) : isLoading ? (
-          <div className="bg-white p-6 shadow-sm rounded-3xl border border-gray-100">
+          <div className="bg-white dark:bg-neutral-900 p-6 shadow-sm rounded-3xl">
             <Skeleton.Button active block style={{ height: 600 }} />
           </div>
         ) : (
