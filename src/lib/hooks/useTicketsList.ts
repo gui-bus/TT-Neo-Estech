@@ -10,7 +10,7 @@ import {
 //#endregion
 
 //#region Interfaces
-export interface TicketsFilters {
+export interface TicketParams {
   page: number;
   pageSize: number;
   status?: TicketStatus;
@@ -22,58 +22,58 @@ export interface TicketsFilters {
 }
 //#endregion
 
-export const useTicketsList = (params: TicketsFilters) => {
+export const processTickets = (data: Ticket[], params: TicketParams) => {
+  let result = [...data];
+
+  //#region Filters
+  if (params.status) result = result.filter((t) => t.status === params.status);
+  if (params.priority)
+    result = result.filter((t) => t.prioridade === params.priority);
+  if (params.area) result = result.filter((t) => t.area === params.area);
+  if (params.text) {
+    const search = params.text.toLowerCase();
+    result = result.filter((t) => t.titulo.toLowerCase().includes(search));
+  }
+  //#endregion
+
+  //#region Sort
+  if (params.sortField && params.sortOrder) {
+    result.sort((a, b) => {
+      const field = params.sortField as keyof Ticket;
+      let valA = a[field] ?? "";
+      let valB = b[field] ?? "";
+
+      if (field === "abertura" || field === "ultimaAtualizacao") {
+        valA = new Date(valA as string).getTime();
+        valB = new Date(valB as string).getTime();
+      }
+
+      if (params.sortOrder === "ascend") return valA > valB ? 1 : -1;
+      return valA < valB ? 1 : -1;
+    });
+  }
+  //#endregion
+
+  //#region Pagination
+  const total = result.length;
+  const start = (params.page - 1) * params.pageSize;
+  const paginatedData = result.slice(start, start + params.pageSize);
+  //#endregion
+
+  //#region Return
+  return {
+    tickets: paginatedData,
+    total,
+  };
+  //#endregion
+};
+
+export const useTicketsList = (params: TicketParams) => {
   return useQuery({
     queryKey: ["TicketsList", params],
     queryFn: async () => {
-      //#region Fake promise
       await new Promise((resolve) => setTimeout(resolve, 1000));
-
-      let result = [...mockedTickets];
-      //#endregion
-
-      //#region Filters
-      if (params.status)
-        result = result.filter((t) => t.status === params.status);
-      if (params.priority)
-        result = result.filter((t) => t.prioridade === params.priority);
-      if (params.area) result = result.filter((t) => t.area === params.area);
-      if (params.text) {
-        const search = params.text.toLowerCase();
-        result = result.filter((t) => t.titulo.toLowerCase().includes(search));
-      }
-      //#endregion
-
-      //#region Sort
-      if (params.sortField && params.sortOrder) {
-        result.sort((a, b) => {
-          const field = params.sortField as keyof Ticket;
-          let valA = a[field] ?? "";
-          let valB = b[field] ?? "";
-
-          if (field === "abertura" || field === "ultimaAtualizacao") {
-            valA = new Date(valA as string).getTime();
-            valB = new Date(valB as string).getTime();
-          }
-
-          if (params.sortOrder === "ascend") return valA > valB ? 1 : -1;
-          return valA < valB ? 1 : -1;
-        });
-      }
-      //#endregion
-
-      //#region Pagination
-      const total = result.length;
-      const start = (params.page - 1) * params.pageSize;
-      const paginatedData = result.slice(start, start + params.pageSize);
-      //#endregion
-
-      //#region Return
-      return {
-        tickets: paginatedData,
-        total,
-      };
-      //#endregion
+      return processTickets(mockedTickets, params);
     },
     placeholderData: (previousData) => previousData,
     retry: 1,
