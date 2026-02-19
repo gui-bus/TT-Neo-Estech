@@ -13,7 +13,7 @@ import {
 import type { ColumnsType, TablePaginationConfig } from "antd/es/table";
 import { FilterValue, SorterResult } from "antd/es/table/interface";
 import { Ticket } from "@/src/lib/types/tickets";
-import { TicketsFilters, useTicketsList } from "@/src/lib/hooks/useTicketsList";
+import { TicketParams, useTicketsList } from "@/src/lib/hooks/useTicketsList";
 import {
   TicketArea,
   TicketPriority,
@@ -57,7 +57,7 @@ export const TicketsTable = () => {
    *   - priority: The current ticket priority filter (defaults to undefined if not provided).
    *   - area: The current ticket area filter (defaults to undefined if not provided).
    */
-  const getInitialParams = (): TicketsFilters => ({
+  const getInitialParams = (): TicketParams => ({
     page: Number(searchParams.get("page")) || 1,
     pageSize: Number(searchParams.get("pageSize")) || 10,
     text: searchParams.get("text") || "",
@@ -81,7 +81,7 @@ export const TicketsTable = () => {
   //#region useStates
   const [selectedTicket, setSelectedTicket] = useState<Ticket | null>(null);
   const [isDrawerOpen, setIsDrawerOpen] = useState(false);
-  const [params, setParams] = useState<TicketsFilters>(getInitialParams());
+  const [params, setParams] = useState<TicketParams>(getInitialParams());
   const [isModalOpen, setIsModalOpen] = useState(false);
 
   const [view, setView] = useState<ViewType>(getInitialView());
@@ -121,14 +121,14 @@ export const TicketsTable = () => {
   /**
    * Handles a change in a filter for the DataTable component.
    *
-   * @param {keyof TicketsFilters} key The key of the filter to be changed.
-   * @param {TicketsFilters[keyofTicketsFilters]} value The new value of the filter.
+   * @param {keyof TicketParams} key The key of the filter to be changed.
+   * @param {TicketParams[keyofTicketsFilters]} value The new value of the filter.
    *
    * Resets the page number to 1 and updates the params state with the new filter value.
    */
-  const handleFilterChange = <K extends keyof TicketsFilters>(
+  const handleFilterChange = <K extends keyof TicketParams>(
     key: K,
-    value: TicketsFilters[K],
+    value: TicketParams[K],
   ) => {
     setParams((prev) => ({ ...prev, [key]: value, page: 1 }));
   };
