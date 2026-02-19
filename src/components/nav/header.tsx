@@ -10,7 +10,7 @@ export const Header = () => {
   return (
     <header className="w-full drop-shadow-xl px-4 h-20 flex items-center justify-between">
       {/* LOGO */}
-      <Link href="/" className="flex items-center gap-2">
+      <Link href="/chamados" className="flex items-center gap-2">
         <Image src="/neoestech.png" alt="Logo" width={50} height={50} />
       </Link>
 
