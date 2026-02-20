@@ -267,7 +267,7 @@ export const TicketsTable = () => {
                       </div>
                     ),
                     value: "gestor",
-                    disabled: forceError || forceEmpty,
+                    disabled: forceError || forceEmpty || !!params.area || !!params.priority || !!params.status,
                   },
                 ]}
                 value={view}
