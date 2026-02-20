@@ -267,11 +267,27 @@ export const TicketsTable = () => {
                       </div>
                     ),
                     value: "gestor",
-                    disabled: forceError || forceEmpty || !!params.area || !!params.priority || !!params.status,
+                    disabled: forceError || forceEmpty,
                   },
                 ]}
                 value={view}
-                onChange={(value) => setView(value as "tecnico" | "gestor")}
+                onChange={(value) => {
+                  const nextView = value as ViewType;
+                  setView(nextView);
+
+                  if (nextView === "gestor") {
+                    setParams({
+                      page: 1,
+                      pageSize: 9999,
+                      text: "",
+                      status: undefined,
+                      priority: undefined,
+                      area: undefined,
+                    });
+                  } else {
+                    setParams(getInitialParams());
+                  }
+                }}
                 className="p-1 bg-gray-100 rounded-lg"
               />
             )}
